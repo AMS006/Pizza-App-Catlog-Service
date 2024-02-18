@@ -1,3 +1,4 @@
+import { Request } from "express";
 
 export interface PriceConfigration {
     [key: string]: {
@@ -17,4 +18,8 @@ export interface CategoryType {
     priceConfigration: PriceConfigration;
     attributes: Attribute[]
 
+}
+
+export interface CategoryRequest extends Request {
+    body: CategoryType
 }

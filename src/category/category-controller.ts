@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { CategoryService } from "./category-service";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
+import { CategoryRequest } from "./category-type";
 
 export class CategoryController {
     constructor(
@@ -11,7 +12,7 @@ export class CategoryController {
     ) {
         this.create = this.create.bind(this);
     }
-    async create(req: Request, res: Response, next: NextFunction) {
+    async create(req: CategoryRequest, res: Response, next: NextFunction) {
         const validataionResult = validationResult(req);
         if (!validataionResult.isEmpty()) {
             return next(createHttpError(400, validataionResult.array()[0].msg as string))
