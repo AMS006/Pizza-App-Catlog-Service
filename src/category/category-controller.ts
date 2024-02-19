@@ -17,12 +17,9 @@ export class CategoryController {
         if (!validataionResult.isEmpty()) {
             return next(createHttpError(400, validataionResult.array()[0].msg as string))
         }
-        try {
-            const category = await this.categoryService.create(req.body);
-            res.status(201).json(category);
-        } catch (error) {
-            this.logger.error(error);
-            next(createHttpError(500, 'Something went wrong'));
-        }
+
+        const category = await this.categoryService.create(req.body);
+        this.logger.info(`Category created: ${category.id}`);
+        res.status(201).json(category);
     }
 }

@@ -3,6 +3,7 @@ import { CategoryController } from "./category-controller";
 import { CategoryService } from "./category-service";
 import logger from "../config/logger";
 import categoryValidator from "./category-validator";
+import { asyncWrapper } from "../common/utils/wrapper";
 
 const router = Router();
 
@@ -14,6 +15,6 @@ const categoryController = new CategoryController(
 
 
 
-router.post("/", categoryValidator, categoryController.create);
+router.post("/", categoryValidator, asyncWrapper(categoryController.create));
 
 export default router;
