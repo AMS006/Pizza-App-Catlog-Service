@@ -17,4 +17,12 @@ const categoryController = new CategoryController(
 
 router.post("/", categoryValidator, asyncWrapper(categoryController.create));
 
+router.get("/", asyncWrapper(categoryController.getAll));
+
+router.get("/:id", asyncWrapper(categoryController.getById));
+
+router.put("/:id", categoryValidator, asyncWrapper(categoryController.update));
+
+router.delete("/:id", asyncWrapper(categoryController.delete));
+
 export default router;

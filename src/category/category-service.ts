@@ -7,4 +7,22 @@ export class CategoryService {
         await newCategory.save();
         return newCategory;
     }
+
+    async getAll() {
+        return CategoryModel.find();
+    }
+
+    async getById(id: string) {
+        return CategoryModel.findById(id);
+    }
+
+    async update(id: string, category: CategoryType) {
+        return CategoryModel.findByIdAndUpdate(id
+            , category
+            , { new: true });
+    }
+
+    async delete(id: string) {
+        return CategoryModel.findByIdAndDelete(id);
+    }
 }
