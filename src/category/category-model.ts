@@ -5,51 +5,51 @@ const priceConfigrationSchema = new mongoose.Schema<PriceConfigration>({
     priceType: {
         type: String,
         required: true,
-        enum: ['base', 'aditional']
+        enum: ["base", "aditional"],
     },
     availableOptions: {
         type: [String],
-        required: true
-    }
+        required: true,
+    },
 });
 
 const attributeSchema = new mongoose.Schema<Attribute>({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     widgetType: {
         type: String,
         required: true,
-        enum: ['radio', 'switch']
+        enum: ["radio", "switch"],
     },
     defaultValue: {
         type: String,
-        required: true
+        required: true,
     },
     availableOptions: {
         type: [String],
-        required: true
-    }
+        required: true,
+    },
 });
 
 const categorySchema = new mongoose.Schema<CategoryType>({
     name: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     priceConfigration: {
         type: Map,
         of: priceConfigrationSchema,
-        required: true
+        required: true,
     },
     attributes: {
         type: [attributeSchema],
-        required: true
-    }
+        required: true,
+    },
 });
 
-const CategoryModel = mongoose.model<CategoryType>('Category', categorySchema);
+const CategoryModel = mongoose.model<CategoryType>("Category", categorySchema);
 
 export default CategoryModel;

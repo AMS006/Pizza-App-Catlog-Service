@@ -8,12 +8,7 @@ import { asyncWrapper } from "../common/utils/wrapper";
 const router = Router();
 
 const categoryService = new CategoryService();
-const categoryController = new CategoryController(
-    categoryService,
-    logger
-);
-
-
+const categoryController = new CategoryController(categoryService, logger);
 
 router.post("/", categoryValidator, asyncWrapper(categoryController.create));
 

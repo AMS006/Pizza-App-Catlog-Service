@@ -1,57 +1,59 @@
 import { body } from "express-validator";
 
 export default [
-    body('name')
+    body("name")
         .exists()
-        .withMessage('name is required')
+        .withMessage("name is required")
         .isString()
-        .withMessage('name should be a string')
+        .withMessage("name should be a string")
         .isLength({ min: 3, max: 50 })
-        .withMessage('name should be between 3 to 50 characters'),
+        .withMessage("name should be between 3 to 50 characters"),
 
-    body('priceConfigration')
+    body("priceConfigration")
         .exists()
-        .withMessage('priceConfigration is required'),
+        .withMessage("priceConfigration is required"),
 
-    body('priceConfigration.*.priceType')
+    body("priceConfigration.*.priceType")
         .exists()
-        .withMessage('priceType is required')
-        .isIn(['base', 'aditional'])
-        .withMessage('priceType should be base or aditional'),
+        .withMessage("priceType is required")
+        .isIn(["base", "aditional"])
+        .withMessage("priceType should be base or aditional"),
 
-    body('priceConfigration.*.availableOptions')
+    body("priceConfigration.*.availableOptions")
         .exists()
-        .withMessage('availableOptions is required')
+        .withMessage("availableOptions is required")
         .isArray({ min: 1 })
-        .withMessage('availableOptions should be an array with at least one element'),
+        .withMessage(
+            "availableOptions should be an array with at least one element",
+        ),
 
-    body('attributes')
-        .exists()
-        .withMessage('attributes is required'),
+    body("attributes").exists().withMessage("attributes is required"),
 
-    body('attributes.*.name')
+    body("attributes.*.name")
         .exists()
-        .withMessage('name is required')
+        .withMessage("name is required")
         .isString()
-        .withMessage('name should be a string')
+        .withMessage("name should be a string")
         .isLength({ min: 3, max: 50 })
-        .withMessage('name should be between 3 to 50 characters'),
+        .withMessage("name should be between 3 to 50 characters"),
 
-    body('attributes.*.widgetType')
+    body("attributes.*.widgetType")
         .exists()
-        .withMessage('widgetType is required')
-        .isIn(['radio', 'switch'])
-        .withMessage('widgetType should be radio or switch'),
+        .withMessage("widgetType is required")
+        .isIn(["radio", "switch"])
+        .withMessage("widgetType should be radio or switch"),
 
-    body('attributes.*.defaultValue')
+    body("attributes.*.defaultValue")
         .exists()
-        .withMessage('defaultValue is required')
+        .withMessage("defaultValue is required")
         .isString()
-        .withMessage('defaultValue should be a string'),
+        .withMessage("defaultValue should be a string"),
 
-    body('attributes.*.availableOptions')
+    body("attributes.*.availableOptions")
         .exists()
-        .withMessage('availableOptions is required')
+        .withMessage("availableOptions is required")
         .isArray({ min: 1 })
-        .withMessage('availableOptions should be an array with at least one element')
-]
+        .withMessage(
+            "availableOptions should be an array with at least one element",
+        ),
+];

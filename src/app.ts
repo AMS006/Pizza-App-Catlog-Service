@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import config from 'config'
+import config from "config";
 import categoryRouter from "./category/category-router";
 import { globalErrorHandler } from "./common/middlewares/globalErrorHandler";
 
@@ -10,7 +10,7 @@ app.use(express.json());
 app.use("/category", categoryRouter);
 
 app.get("/", (req: Request, res: Response) => {
-    res.json({ message: config.get('server.port') });
+    res.json({ message: config.get("server.port") });
 });
 
 app.use(globalErrorHandler);
