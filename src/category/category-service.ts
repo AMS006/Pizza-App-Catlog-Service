@@ -17,9 +17,7 @@ export class CategoryService {
     }
 
     async update(id: string, category: CategoryType) {
-        return CategoryModel.findByIdAndUpdate(id
-            , category
-            , { new: true });
+        return CategoryModel.findByIdAndUpdate(id, category, { new: true });
     }
 
     async delete(id: string) {
