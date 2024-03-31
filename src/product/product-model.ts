@@ -34,6 +34,9 @@ const productSchema = new Schema(
             type: String,
             required: true,
         },
+        publicId: {
+            type: String,
+        },
         tenantId: {
             type: String,
             required: true,

@@ -137,3 +137,5 @@ dist
 
 logs
 /config
+
+/src/common/services/key.json

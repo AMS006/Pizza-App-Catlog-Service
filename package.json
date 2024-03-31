@@ -47,8 +47,10 @@
         ]
     },
     "dependencies": {
+        "@google-cloud/storage": "^7.9.0",
         "@types/cookie-parser": "^1.4.7",
         "@types/express-fileupload": "^1.4.4",
+        "cloudinary": "^2.1.0",
         "config": "^3.3.11",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",

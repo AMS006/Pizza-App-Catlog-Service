@@ -1,14 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { Product } from "./product-type";
+import { Filters, Product } from "./product-type";
 import { ProductService } from "./product-service";
 import { validationResult } from "express-validator";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
+import { UploadedFile } from "express-fileupload";
+import mongoose from "mongoose";
+import CloudinaryUpload from "../common/services/CloudinaryUpload";
 
 export class ProductController {
     constructor(
         private productService: ProductService,
         private logger: Logger,
+        private cloudinaryUpload: CloudinaryUpload,
     ) {}
 
     createProduct = async (req: Request, res: Response, next: NextFunction) => {
@@ -29,8 +33,20 @@ export class ProductController {
             attributes,
             tenantId,
             categoryId,
-            image,
         } = req.body as Product;
+
+        const image = req.files?.image as UploadedFile;
+
+        if (!image) {
+            return next(createHttpError(400, "Image is required"));
+        }
+
+        // Upload image to cloud
+        const filePath = `RestaurantManagment/products`;
+        const [url, publicId] = await this.cloudinaryUpload.upload(
+            image.data,
+            filePath,
+        );
 
         const product = {
             name,
@@ -39,17 +55,43 @@ export class ProductController {
             attributes: JSON.parse(attributes) as string,
             tenantId,
             categoryId,
-            image,
+            image: url,
+            publicId,
         };
 
         const createdProduct = await this.productService.createProduct(product);
 
         this.logger.info("Prouct Created", { id: createdProduct._id });
-        res.status(201).json({ product: createdProduct });
+        res.status(201).json(createdProduct);
     };
 
     getProducts = async (req: Request, res: Response) => {
-        const products = await this.productService.getProducts();
+        const { search, tenantId, categoryId, isPublished } = req.query;
+
+        const filters: Filters = {};
+
+        if (search) filters.name = { $regex: search as string, $options: "i" };
+        if (tenantId) filters.tenantId = tenantId as string;
+        if (
+            categoryId &&
+            mongoose.Types.ObjectId.isValid(categoryId as string)
+        ) {
+            filters.categoryId = new mongoose.Types.ObjectId(
+                categoryId as string,
+            );
+        }
+        if (isPublished) filters.isPublished = isPublished === "true";
+
+        const pagination = {
+            page: parseInt(req.query.page as string) || 1,
+            limit: parseInt(req.query.limit as string) || 10,
+        };
+
+        const products = await this.productService.getProducts(
+            filters,
+            pagination,
+        );
+
         res.status(200).json(products);
     };
 
@@ -72,8 +114,16 @@ export class ProductController {
         res.status(200).json(product);
     };
 
-    deleteProduct = async (req: Request, res: Response) => {
-        await this.productService.deleteProduct(req.params.id);
+    deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+        const product = await this.productService.deleteProduct(req.params.id);
+
+        if (!product) {
+            return next(createHttpError(404, "Product not found"));
+        }
+
+        if (product.publicId !== undefined) {
+            await this.cloudinaryUpload.delete(product.publicId);
+        }
 
         this.logger.info("Prouct Deleted", { id: req.params.id });
         res.status(204).send();
@@ -92,7 +142,29 @@ export class ProductController {
 
         const { id } = req.params;
 
-        if (!id) return next(createHttpError(400, "Id is required"));
+        if (!id) return next(createHttpError(400, "Product Id is required"));
+
+        const isProductExist = await this.productService.getProductById(id);
+
+        if (!isProductExist) {
+            return next(createHttpError(404, "Product not found"));
+        }
+
+        let newImage = isProductExist.image;
+        let newPublicId = isProductExist.publicId;
+
+        if (req.files?.image) {
+            const image = req.files?.image as UploadedFile;
+            const filePath = `RestaurantManagment/products`;
+            const [url, publicId] = await this.cloudinaryUpload.upload(
+                image.data,
+                filePath,
+            );
+            await this.cloudinaryUpload.delete(newPublicId as string);
+            newImage = url;
+            newPublicId = publicId;
+        }
+
         const {
             name,
             description,
@@ -100,7 +172,6 @@ export class ProductController {
             attributes,
             tenantId,
             categoryId,
-            image,
         } = req.body as Product;
 
         const product = {
@@ -110,7 +181,8 @@ export class ProductController {
             attributes: JSON.parse(attributes) as string,
             tenantId,
             categoryId,
-            image,
+            image: newImage,
+            publicId: newPublicId,
         };
 
         const updateProduct = await this.productService.updateProduct(
