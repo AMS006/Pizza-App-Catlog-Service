@@ -9,6 +9,8 @@ import authenticate from "../common/middlewares/authenticate";
 import CloudinaryUpload from "../common/services/CloudinaryUpload";
 import updateProductValidator from "./update-product-validator";
 import createHttpError from "http-errors";
+import canAccess from "../common/middlewares/canAccess";
+import { Roles } from "../common/utils/constants";
 
 const router = Router();
 
@@ -23,6 +25,7 @@ const productController = new ProductController(
 router.post(
     "/",
     authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
     fileUpload({
         limits: { fileSize: 1 * 1024 * 1024 }, // 1MB,
         abortOnLimit: true,
@@ -41,12 +44,14 @@ router.get("/:id", asyncWrapper(productController.getProductById));
 router.delete(
     "/:id",
     authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
     asyncWrapper(productController.deleteProduct),
 );
 
 router.put(
     "/:id",
     authenticate,
+    canAccess([Roles.ADMIN, Roles.MANAGER]),
     fileUpload({
         limits: { fileSize: 1 * 1024 * 1024 }, // 1MB,
         abortOnLimit: true,

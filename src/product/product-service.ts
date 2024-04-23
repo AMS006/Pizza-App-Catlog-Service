@@ -8,7 +8,11 @@ import {
 
 export class ProductService {
     async createProduct(product: Product) {
-        return (await ProductModel.create(product)) as Product;
+        const createdProduct = (await ProductModel.create(
+            product,
+        )) as unknown as Product;
+
+        return createdProduct;
     }
     async getProducts(filters: Filters, pagination: Pagination) {
         const skip = (pagination.page - 1) * pagination.limit;
@@ -16,6 +20,27 @@ export class ProductService {
         const pipeline = [
             {
                 $match: filters,
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "categoryId",
+                    foreignField: "_id",
+                    as: "category",
+                    pipeline: [
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                attributes: 1,
+                                priceConfiguration: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: "$category",
             },
             {
                 $facet: {

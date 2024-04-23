@@ -1,11 +1,20 @@
 import express, { Request, Response } from "express";
 import config from "config";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import categoryRouter from "./category/category-router";
 import productRouter from "./product/product-routes";
 import { globalErrorHandler } from "./common/middlewares/globalErrorHandler";
 
 const app = express();
+
+app.use(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    }),
+);
 
 app.use(express.json());
 app.use(cookieParser());
