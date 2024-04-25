@@ -33,6 +33,7 @@ export class ProductController {
             attributes,
             tenantId,
             categoryId,
+            isPublished,
         } = req.body as Product;
 
         const image = req.files?.image as UploadedFile;
@@ -57,6 +58,7 @@ export class ProductController {
             categoryId,
             image: url,
             publicId,
+            isPublished: Boolean(isPublished),
         };
 
         const createdProduct = await this.productService.createProduct(product);
@@ -172,6 +174,7 @@ export class ProductController {
             attributes,
             tenantId,
             categoryId,
+            isPublished,
         } = req.body as Product;
 
         const product = {
@@ -183,6 +186,7 @@ export class ProductController {
             categoryId,
             image: newImage,
             publicId: newPublicId,
+            isPublished,
         };
 
         const updateProduct = await this.productService.updateProduct(

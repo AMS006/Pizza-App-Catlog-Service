@@ -10,6 +10,7 @@ export interface Product {
     categoryId: string;
     image?: string;
     publicId?: string;
+    isPublished: boolean;
 }
 
 export interface Filters {
