@@ -13,7 +13,7 @@ export class ProductController {
         private productService: ProductService,
         private logger: Logger,
         private cloudinaryUpload: CloudinaryUpload,
-    ) {}
+    ) { }
 
     createProduct = async (req: Request, res: Response, next: NextFunction) => {
         const validataionResult = validationResult(req);
@@ -33,8 +33,10 @@ export class ProductController {
             attributes,
             tenantId,
             categoryId,
-            isPublished,
         } = req.body as Product;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const isPublished = req.body.isPublished === 'true' ? true : false;
 
         const image = req.files?.image as UploadedFile;
 
@@ -58,7 +60,7 @@ export class ProductController {
             categoryId,
             image: url,
             publicId,
-            isPublished: Boolean(isPublished),
+            isPublished,
         };
 
         const createdProduct = await this.productService.createProduct(product);
