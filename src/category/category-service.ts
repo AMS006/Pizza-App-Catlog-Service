@@ -1,5 +1,10 @@
 import CategoryModel from "./category-model";
-import { CategoryType } from "./category-type";
+import {
+    CategoryType,
+    Filters,
+    GetCategoryResponse,
+    Pagination,
+} from "./category-type";
 
 export class CategoryService {
     async create(category: CategoryType) {
@@ -8,8 +13,30 @@ export class CategoryService {
         return newCategory;
     }
 
-    async getAll() {
-        return CategoryModel.find();
+    async getAll(filters: Filters, pagination: Pagination) {
+        const skip = (pagination.page - 1) * pagination.limit;
+
+        const pipeline = [
+            {
+                $match: filters,
+            },
+            {
+                $facet: {
+                    data: [{ $skip: skip }, { $limit: pagination.limit }],
+                    total: [{ $count: "total" }],
+                },
+            },
+            {
+                $project: {
+                    data: 1,
+                    total: { $arrayElemAt: ["$total.total", 0] },
+                },
+            },
+        ];
+
+        const result = await CategoryModel.aggregate(pipeline);
+
+        return result[0] as GetCategoryResponse;
     }
 
     async getById(id: string) {

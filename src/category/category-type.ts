@@ -15,10 +15,23 @@ export interface Attribute {
 }
 export interface CategoryType {
     name: string;
-    priceConfigration: PriceConfigration;
+    priceConfiguration: PriceConfigration;
     attributes: Attribute[];
 }
 
 export interface CategoryRequest extends Request {
     body: CategoryType;
+}
+
+export interface Filters {
+    name?: { $regex: string; $options: string };
+}
+export interface Pagination {
+    page: number;
+    limit: number;
+}
+
+export interface GetCategoryResponse {
+    data: CategoryType[];
+    total: number;
 }

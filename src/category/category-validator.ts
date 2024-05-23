@@ -9,14 +9,14 @@ export default [
         .isLength({ min: 3, max: 50 })
         .withMessage("name should be between 3 to 50 characters"),
 
-    body("priceConfigration")
+    body("priceConfiguration")
         .exists()
         .withMessage("priceConfigration is required"),
 
     body("priceConfigration.*.priceType")
         .exists()
         .withMessage("priceType is required")
-        .isIn(["base", "aditional"])
+        .isIn(["base", "additional"])
         .withMessage("priceType should be base or aditional"),
 
     body("priceConfigration.*.availableOptions")

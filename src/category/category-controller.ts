@@ -3,7 +3,7 @@ import { CategoryService } from "./category-service";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
-import { CategoryRequest } from "./category-type";
+import { CategoryRequest, Filters } from "./category-type";
 
 export class CategoryController {
     constructor(
@@ -32,7 +32,20 @@ export class CategoryController {
 
     getAll = async (req: CategoryRequest, res: Response) => {
         this.logger.info("Get all categories");
-        const categories = await this.categoryService.getAll();
+        const { search } = req.query;
+
+        const filters: Filters = {};
+
+        if (search) filters.name = { $regex: search as string, $options: "i" };
+
+        const pagination = {
+            page: parseInt(req.query.page as string) || 1,
+            limit: parseInt(req.query.limit as string) || 10,
+        };
+        const categories = await this.categoryService.getAll(
+            filters,
+            pagination,
+        );
         res.status(200).json(categories);
     };
 
