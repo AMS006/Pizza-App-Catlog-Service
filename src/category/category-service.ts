@@ -1,3 +1,4 @@
+import ProductModel from "../product/product-model";
 import CategoryModel from "./category-model";
 import {
     CategoryType,
@@ -48,6 +49,10 @@ export class CategoryService {
     }
 
     async delete(id: string) {
+        const isProductExists = await ProductModel.exists({ categoryId: id });
+        if (isProductExists) {
+            throw new Error("Cannot delete category because it has products");
+        }
         return CategoryModel.findByIdAndDelete(id);
     }
 }

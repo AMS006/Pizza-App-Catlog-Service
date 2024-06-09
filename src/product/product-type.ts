@@ -11,6 +11,7 @@ export interface Product {
     image?: string;
     publicId?: string;
     isPublished: boolean;
+    isToppingAvailable?: boolean;
 }
 
 export interface Filters {

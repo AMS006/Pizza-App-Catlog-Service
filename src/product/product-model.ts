@@ -50,6 +50,10 @@ const productSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        isToppingAvailable: {
+            type: Boolean,
+            default: true,
+        },
 
         priceConfiguration: {
             type: Map,
